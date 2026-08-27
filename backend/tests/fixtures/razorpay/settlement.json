@@ -1,0 +1,16 @@
+{
+  "entity": "collection",
+  "count": 1,
+  "items": [
+    {
+      "id": "setl_1234567890",
+      "entity": "settlement",
+      "amount": 485000,
+      "status": "processed",
+      "fees": 1271,
+      "tax": 229,
+      "utr": "UTR987654321",
+      "created_at": 1610000000
+    }
+  ]
+}

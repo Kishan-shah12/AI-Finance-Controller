@@ -1,0 +1,19 @@
+{
+  "entity": "collection",
+  "count": 1,
+  "items": [
+    {
+      "entity": "settlement.transaction",
+      "type": "payment",
+      "payment_id": "pay_1234567890",
+      "order_id": "order_1234567890",
+      "amount": 500000,
+      "credit": 485000,
+      "debit": 0,
+      "fees": 1271,
+      "tax": 229,
+      "settlement_id": "setl_1234567890",
+      "created_at": 1610000000
+    }
+  ]
+}

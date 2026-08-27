@@ -1,0 +1,10 @@
+{
+  "id": "pay_1234567890",
+  "entity": "payment",
+  "amount": 500000,
+  "currency": "INR",
+  "status": "captured",
+  "order_id": "order_1234567890",
+  "method": "upi",
+  "created_at": 1609999900
+}

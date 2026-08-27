@@ -1,0 +1,29 @@
+# Secrets & Environment
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules
+frontend/node_modules/
+frontend/.next/
+.next
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+backend/.venv/
+
+# Ground truth answer keys & artifacts
+test_set.json
+*.json
+!backend/tests/fixtures/razorpay/*.json
+
+# macOS
+.DS_Store
+
+# Databases
+*.db
