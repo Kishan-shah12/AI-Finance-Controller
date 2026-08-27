@@ -23,6 +23,8 @@ test_set.json
 !backend/tests/fixtures/razorpay/*.json
 !frontend/package.json
 !frontend/package-lock.json
+!frontend/tsconfig.json
+!frontend/components.json
 
 # macOS
 .DS_Store
