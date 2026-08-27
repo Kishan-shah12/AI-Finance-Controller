@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: reconai
+Version: 0.1.0
+Summary: ReconAI - AI Finance Controller
+Requires-Python: >=3.13
+Requires-Dist: pydantic>=2.8.0
+Requires-Dist: faker>=26.0.0
+Requires-Dist: scikit-learn>=1.3.0
+Requires-Dist: rapidfuzz>=3.5.0
+Requires-Dist: fastapi>=0.100.0
+Requires-Dist: pydantic-settings>=2.0.0
+Requires-Dist: requests>=2.31.0
+Requires-Dist: razorpay>=1.4.0
+Requires-Dist: uvicorn>=0.23.0
+Requires-Dist: sqlalchemy>=2.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: httpx>=0.24.0; extra == "dev"

@@ -1,0 +1,7 @@
+pyproject.toml
+app/__init__.py
+reconai.egg-info/PKG-INFO
+reconai.egg-info/SOURCES.txt
+reconai.egg-info/dependency_links.txt
+reconai.egg-info/requires.txt
+reconai.egg-info/top_level.txt
