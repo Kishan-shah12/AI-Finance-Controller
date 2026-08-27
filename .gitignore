@@ -21,6 +21,8 @@ backend/.venv/
 test_set.json
 *.json
 !backend/tests/fixtures/razorpay/*.json
+!frontend/package.json
+!frontend/package-lock.json
 
 # macOS
 .DS_Store
