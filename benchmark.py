@@ -11,8 +11,11 @@ backend_dir = str(Path(__file__).parent.resolve() / "backend")
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
+# pyrefly: ignore [missing-import]
 from app.services.reconciliation.engine import reconcile
+# pyrefly: ignore [missing-import]
 from app.services.reconciliation.thresholds import ReconciliationThresholds
+# pyrefly: ignore [missing-import]
 from app.services.synthetic.generator import DataGenerator
 
 
