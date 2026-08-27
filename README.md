@@ -2,7 +2,7 @@
 
 **"Reconcile faster. Explain every variance. Never force a financial match."**
 
-ReconAI is an enterprise-grade reconciliation engine designed for Finance Controllers. It automatically bridges Orders, Payments, Settlements, and Bank Transactions, utilizing an intelligent deterministic rule-engine overlaid with LLM-powered variance explanation.
+ReconAI is an enterprise-grade reconciliation engine designed for Finance Controllers. It automatically bridges Orders, Payments, Settlements, and Bank Transactions, utilizing an intelligent deterministic rule-engine overlaid with AI variance explanation.
 
 ## Core Tenets
 - **Precision First**: Prefers an honest exception over an unsafe automated financial match.
@@ -25,9 +25,9 @@ ReconAI is an enterprise-grade reconciliation engine designed for Finance Contro
 2. **Backend**:
    ```bash
    cd backend
-   python -m venv .venv
+   python3.13 -m venv .venv
    source .venv/bin/activate
-   pip install -r requirements.txt
+   python -m pip install -e ".[dev]"
    ```
 3. **Frontend**:
    ```bash
@@ -38,23 +38,35 @@ ReconAI is an enterprise-grade reconciliation engine designed for Finance Contro
 
 ## Environment Variables
 Review `.env.example`. Do **not** commit actual secrets.
-Backend requires a `DATABASE_URL`. If Supabase is used, populate `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Razorpay and LLM keys are entirely optional but required for full Live Data & Agent flows.
+Backend requires a `DATABASE_URL`. If Supabase is used, populate `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+
+## Deployment Modes
+
+- **LOCAL DEVELOPMENT**: Runs entirely locally using SQLite or local Postgres. Frontend runs on `localhost:3000`, backend on `localhost:8000`.
+- **DEMO MODE**: A single-tenant demonstration mode using deterministic synthetic data (SyntheticProvider). Designed to showcase capabilities safely without exposing production data.
+- **RAZORPAY TEST MODE**: A provider interoperability feature. Ingests data from Razorpay's sandbox/test mode to demonstrate API connectivity and normalization.
+- **PRODUCTION DEPLOYMENT**: Designed for Render (Backend) and Vercel (Frontend). Requires secure PostgreSQL (e.g., Supabase) with strict Row Level Security (RLS) enforcement.
+
+*Note: If the demo environment is expected to ship with Gemini configured, this must be set up separately as a deployment requirement via `GEMINI_API_KEY`.*
 
 ## Judge Demo Mode (`/demo`)
 The Judge Demo provides a 5-minute presentation-ready experience:
-1. Opens with **1,000 synthetic records** injected directly via `seed=42`.
+1. Opens with **1,000 synthetic records** injected directly via `seed=42` (deterministic SyntheticProvider mode).
 2. Executes reconciliation through the live engine.
 3. Showcases the core metrics (Operational Match Rate, Standard Precision).
 4. Highlights the highest-priority exceptions.
-5. Provides an LLM-driven explanation for *why* a variance occurred safely.
+5. The Judge Demo provides an evidence-backed AI explanation when an LLM provider is configured.
 
-## Evaluation Methodology
-See `docs/EVALUATION.md`. The benchmark uses three splits (Development, Validation, Locked Test). The Locked Test set (`test_set.json`) is read-only and deliberately isolated from all application execution to ensure zero data leakage.
+## Performance
+- **Core Engine Throughput**: ~99K records/sec local in-memory benchmark.
+- **Local E2E API latency**: measured on localhost.
+*(Note: These are local benchmark metrics and do not represent production performance).*
 
-## Deployment
-- **Frontend**: Designed for Vercel. Map `NEXT_PUBLIC_API_URL` to your Render deployment.
-- **Backend**: Designed for Render (`render.yaml` provided). Configures Uvicorn and maps CORS via `ALLOWED_ORIGINS`.
+## Security & Evaluation
+- **Synthetic Data**: Synthetic data is used exclusively for evaluation.
+- **Test Isolation**: The locked test answer key (`test_set.json`) is read-only and strictly isolated from all application execution to prevent data leakage.
+- **Single-Tenant Demo**: The current demo is single-tenant. 
+- **Production RLS**: Supabase RLS (Row Level Security) requires production configuration and enforcement before granting any third-party user access.
 
 ## Limitations
-- **Multi-Tenant Security**: While Row Level Security (RLS) is intended on Supabase, the demo assumes a single-tenant environment. Ensure RLS policies are rigorously applied before granting third-party user access.
 - **Razorpay Sandbox**: Data ingestion is strictly normalized from Razorpay Test Mode; production Razorpay schemas may drift.
