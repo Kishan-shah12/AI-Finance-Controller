@@ -21,6 +21,8 @@ backend/.venv/
 test_set.json
 *.json
 !backend/tests/fixtures/razorpay/*.json
+!backend/evaluation/final/metrics.json
+!backend/evaluation/final/evaluation_config.json
 !frontend/package.json
 !frontend/package-lock.json
 !frontend/tsconfig.json
