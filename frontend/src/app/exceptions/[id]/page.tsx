@@ -19,6 +19,10 @@ export default function ExceptionDetail() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!params?.id || params.id === "undefined" || params.id === "null") {
+        setLoading(false);
+        return;
+      }
       try {
         const data = await api.getExceptionDetail(params.id as string);
         setException(data);
@@ -29,7 +33,7 @@ export default function ExceptionDetail() {
       }
     }
     fetchData();
-  }, [params.id]);
+  }, [params?.id]);
 
   if (loading) {
     return <div className="p-8 flex items-center justify-center text-muted-foreground">Loading investigation context...</div>;
