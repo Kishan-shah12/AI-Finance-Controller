@@ -20,8 +20,18 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="ReconAI API", version="1.0.0", lifespan=lifespan)
 
 # Configure CORS for Next.js frontend
-allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
-allowed_origins = [origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()]
+allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "")
+allowed_origins = [origin.strip().rstrip('/') for origin in allowed_origins_str.split(",") if origin.strip()]
+
+# Always ensure local dev and known production Vercel origins are permitted as fallback if env var missed it
+default_origins = [
+    "http://localhost:3000",
+    "https://reconai-3r0e9x0jx-kishan-sah-s-projects.vercel.app",
+    "https://reconai-3r0e9x0jx-kishan-s-projects.vercel.app",
+]
+for origin in default_origins:
+    if origin not in allowed_origins:
+        allowed_origins.append(origin)
 
 app.add_middleware(
     CORSMiddleware,
