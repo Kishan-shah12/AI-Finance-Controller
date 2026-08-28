@@ -105,6 +105,21 @@ export const api = {
     }
   },
 
+  getDependenciesHealth: async (): Promise<any> => {
+    try {
+      // Direct raw API call since /health is outside /api/v1
+      // Assuming apiClient baseURL is /api/v1, we might need to use raw axios or adjust path.
+      // Wait, apiClient's baseURL is `/api/v1`. /health is usually at the root of the FastAPI app.
+      // Let's use axios directly with the rawBaseUrl
+      const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await axios.get(`${rawBaseUrl.replace(/\/$/, '')}/health/dependencies`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch dependencies health:", error);
+      return null;
+    }
+  },
+
   getReconciliationRunStatus: async (runId: string): Promise<any> => {
     try {
       const response = await apiClient.get(`/reconciliation/runs/${runId}`);
