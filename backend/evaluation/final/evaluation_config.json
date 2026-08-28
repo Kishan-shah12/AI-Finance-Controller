@@ -1,0 +1,28 @@
+{
+  "model_version": "trained_v1",
+  "thresholds": {
+    "verified_match_min": 0.95,
+    "explainable_variance_min": 0.8,
+    "review_min": 0.4,
+    "ambiguity_margin": 0.02
+  },
+  "feature_version": "v1",
+  "dataset_version": "v1",
+  "hyperparameters": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "dual": false,
+    "fit_intercept": true,
+    "intercept_scaling": 1,
+    "l1_ratio": null,
+    "max_iter": 100,
+    "multi_class": "deprecated",
+    "n_jobs": null,
+    "penalty": "l2",
+    "random_state": 42,
+    "solver": "lbfgs",
+    "tol": 0.0001,
+    "verbose": 0,
+    "warm_start": false
+  }
+}

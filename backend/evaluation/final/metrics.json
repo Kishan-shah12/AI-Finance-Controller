@@ -1,0 +1,16 @@
+{
+  "total_scenarios": 150,
+  "operational_match_rate": 0.6933333333333334,
+  "strict_verified_match_rate": 0.4866666666666667,
+  "auto_match_rate": 0.6933333333333334,
+  "standard_precision": 1.0,
+  "overall_match_recall": 0.7878787878787878,
+  "standard_f1": 0.8813559322033898,
+  "safe_auto_match_precision": 1.0,
+  "safe_auto_match_recall": 1.0,
+  "false_match_rate": 0.0,
+  "review_rate": 0.03333333333333333,
+  "exception_rate": 0.2733333333333333,
+  "core_engine_throughput": 179906.81424973012,
+  "end_to_end_throughput": "not measured"
+}
