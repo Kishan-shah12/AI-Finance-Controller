@@ -214,14 +214,20 @@ def get_run_status(run_id: str, db: Session = Depends(get_db)):
 
 @router.get("/demo/latest")
 def get_latest_demo_run(db: Session = Depends(get_db)):
-    run_record = db.query(ReconciliationRun).filter(ReconciliationRun.mode == "demo", ReconciliationRun.status == "COMPLETED").order_by(ReconciliationRun.started_at.desc()).first()
+    run_record = db.query(ReconciliationRun).filter(
+        ReconciliationRun.mode == "demo", 
+        ReconciliationRun.status == "COMPLETED",
+        ReconciliationRun.provider == "SYNTHETIC",
+        ReconciliationRun.seed == 42
+    ).order_by(ReconciliationRun.created_at.desc()).first()
+    
     if not run_record:
-        raise HTTPException(status_code=404, detail="No completed demo runs found")
+        raise HTTPException(status_code=404, detail="No completed demo run found")
     
     return {
         "run_id": run_record.id,
         "status": run_record.status,
-        "started_at": run_record.started_at,
+        "started_at": run_record.created_at,  # Map to expected frontend field
         "records_processed": run_record.records_processed,
         "scenario_count": run_record.scenario_count,
         "verified_match": run_record.verified_match,
