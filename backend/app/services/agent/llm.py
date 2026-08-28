@@ -147,8 +147,28 @@ class AgentService:
             
             run_id = latest_run.id if latest_run else None
 
-            # Route 1: "Why is today's settlement short?"
-            if "short" in query_lower or "variance" in query_lower:
+            # Route 1: GREETING
+            if any(word in query_lower.split() for word in ["hi", "hello", "hey", "greetings"]):
+                return {
+                    "status": "SUCCESS",
+                    "answer": "Hello! I am your AI Finance Controller. How can I assist you today?",
+                    "evidence": None,
+                    "confidence": None,
+                    "provider_metadata": "Agent router"
+                }
+                
+            # Route 2: CAPABILITIES
+            elif any(phrase in query_lower for phrase in ["what can you do", "what services", "how can you help", "what can i ask"]):
+                return {
+                    "status": "SUCCESS",
+                    "answer": "I can analyze settlement variances, investigate exceptions, find unresolved high-value transactions, and identify records that are safe to auto-close.",
+                    "evidence": None,
+                    "confidence": None,
+                    "provider_metadata": "Agent router"
+                }
+
+            # Route 3: SETTLEMENT_VARIANCE
+            elif any(word in query_lower for word in ["short", "variance", "lower than expected"]):
                 if run_id:
                     exceptions = db.query(ExceptionRecord).filter(
                         ExceptionRecord.run_id == run_id,
@@ -165,8 +185,8 @@ class AgentService:
                             "explanation": f"Variance driver found for transaction {tx_ref}"
                         })
 
-            # Route 2: "Show unresolved transactions above ₹10,000."
-            elif "unresolved" in query_lower and "10,000" in query_lower:
+            # Route 4: UNRESOLVED_TRANSACTIONS
+            elif ("unresolved" in query_lower and any(word in query_lower for word in ["10,000", "ten thousand", "high-value"])):
                 if run_id:
                     exceptions = db.query(ExceptionRecord).filter(
                         ExceptionRecord.run_id == run_id,
@@ -183,8 +203,8 @@ class AgentService:
                             "explanation": f"High value unresolved exception for transaction {tx_ref}"
                         })
 
-            # Route 3: "Which records are safe to auto-close?"
-            elif "auto-close" in query_lower or "safe" in query_lower:
+            # Route 5: SAFE_AUTO_CLOSE
+            elif any(phrase in query_lower for phrase in ["auto-close", "safe", "auto resolved"]):
                 if run_id:
                     exceptions = db.query(ExceptionRecord).filter(
                         ExceptionRecord.run_id == run_id,
@@ -201,18 +221,14 @@ class AgentService:
                             "explanation": f"Record meets business rules for auto-close: {tx_ref}"
                         })
 
-            # Route 4: GREETING (Empty evidence)
-            elif "hi" == query_lower.strip() or "hello" in query_lower:
-                pass
-                
-            # Route 5: OTHER
+            # Route 6: OTHER
             else:
                 return {
                     "status": "SUCCESS",
-                    "answer": "I'm sorry, that query is outside my supported financial analysis parameters.",
-                    "evidence": [],
+                    "answer": "I can help with settlement analysis, exceptions, unresolved transactions, and safe automation.",
+                    "evidence": None,
                     "confidence": None,
-                    "provider_metadata": "Evidence-backed fallback"
+                    "provider_metadata": "Agent router"
                 }
 
             context_str = str(context_data) if context_data else "No specific context provided."

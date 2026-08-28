@@ -15,9 +15,15 @@ export function Topbar() {
           DEMO MODE
         </Badge>
 
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground border rounded-md px-3 py-1.5 bg-muted/30">
-          <span className="font-medium">Demo data · Aug 26, 2026</span>
-          <ChevronDown className="h-3 w-3" />
+        <div className="flex flex-col items-end mr-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span className="font-medium text-amber-600/80">Demo data · Aug 26, 2026</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span className="font-medium">
+              Today · {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date())}
+            </span>
+          </div>
         </div>
 
         <button className="flex items-center gap-2 text-sm text-muted-foreground border rounded-md px-3 py-1.5 bg-muted/30 hover:bg-muted/50 transition-colors">
