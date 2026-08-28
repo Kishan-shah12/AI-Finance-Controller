@@ -10,6 +10,32 @@ const apiClient = axios.create({
   },
 });
 
+export class ApiError extends Error {
+  constructor(
+    public type: 'NO_DATA_YET' | 'API_ERROR' | 'CONNECTION_ERROR',
+    message: string
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+function handleApiError(error: any): never {
+  if (axios.isAxiosError(error)) {
+    if (!error.response) {
+      throw new ApiError('CONNECTION_ERROR', 'Unable to reach the ReconAI backend.');
+    }
+    if (error.response.status === 404 && error.response.data?.detail === 'Final evaluation not found') {
+      throw new ApiError('NO_DATA_YET', 'Final evaluation not found');
+    }
+    if (error.response.status >= 500) {
+      throw new ApiError('API_ERROR', 'ReconAI encountered a temporary server error.');
+    }
+    throw new ApiError('API_ERROR', 'ReconAI backend is unavailable.');
+  }
+  throw new ApiError('API_ERROR', 'An unexpected error occurred.');
+}
+
 export const api = {
   getEvaluationMetrics: async (): Promise<MetricData> => {
     try {
@@ -17,7 +43,7 @@ export const api = {
       return response.data;
     } catch (error) {
       console.error("Failed to fetch evaluation metrics:", error);
-      throw error;
+      return handleApiError(error);
     }
   },
   
