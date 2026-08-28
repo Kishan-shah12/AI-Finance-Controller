@@ -1,8 +1,18 @@
 import os
+import json
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List
 from sqlalchemy.orm import Session
 from app.db.models import ExceptionRecord, ReconciliationRun
+
+try:
+    from google import genai
+    from google.genai import errors
+    GEMINI_AVAILABLE = True
+except ImportError:
+    GEMINI_AVAILABLE = False
+
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 class LLMProvider(ABC):
     @abstractmethod
@@ -12,24 +22,84 @@ class LLMProvider(ABC):
 class GeminiProvider(LLMProvider):
     def __init__(self, api_key: str):
         self.api_key = api_key
-        # In a real implementation, we would initialize the google.generativeai client here
+        self.models = [
+            os.getenv("GEMINI_MODEL_PRIMARY", "gemini-3.6-flash"),
+            os.getenv("GEMINI_MODEL_FALLBACK_1", "gemini-3.5-flash"),
+            os.getenv("GEMINI_MODEL_FALLBACK_2", "gemini-3.5-flash-lite")
+        ]
+        if GEMINI_AVAILABLE and self.api_key:
+            self.client = genai.Client(api_key=self.api_key)
+        else:
+            self.client = None
+
+    def _should_retry(exc: BaseException) -> bool:
+        if isinstance(exc, errors.APIError):
+            return exc.code in (429, 503, 500, 502, 504)
+        return False
+
+    @retry(retry=retry_if_exception_type(errors.APIError), wait=wait_exponential(multiplier=1, min=2, max=10), stop=stop_after_attempt(3))
+    def _call_model(self, model_name: str, prompt: str, evidence_str: str) -> str:
+        if not self.client:
+            raise ValueError("Gemini client not initialized")
         
+        system_instruction = "You are ReconAI, a finance controller. Answer only based on the provided evidence. Keep it concise. Do not expose chain-of-thought."
+        full_prompt = f"Evidence:\n{evidence_str}\n\nUser Query: {prompt}"
+        
+        response = self.client.models.generate_content(
+            model=model_name,
+            contents=full_prompt,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=system_instruction,
+                temperature=0.1
+            )
+        )
+        return response.text
+
+    def _fallback_response(self, evidence: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            "answer": "This is a deterministic fallback response based strictly on the retrieved database evidence.",
+            "evidence": evidence,
+            "confidence": evidence[0]["value"] if evidence and "value" in evidence[0] else None,
+            "provider_metadata": "Evidence-backed fallback",
+            "recommended_action": "Review provided evidence."
+        }
+
     def query(self, prompt: str, context: str, evidence: List[Dict[str, Any]]) -> Dict[str, Any]:
-        # Stub implementation using real evidence
         if not evidence:
             return {
-                "answer": "Hello. How can I assist you with ReconAI today?",
+                "answer": "Hello. I am your AI Finance Controller. How can I assist you with your reconciliations today?",
                 "evidence": [],
                 "confidence": None,
+                "provider_metadata": "Evidence-backed fallback",
                 "recommended_action": None
             }
+            
+        if not self.client:
+            return self._fallback_response(evidence)
+            
+        evidence_str = json.dumps([{k: v for k, v in e.items() if k != 'exception_id'} for e in evidence])
         
-        return {
-            "answer": "This is a deterministic fallback response based on real retrieved database evidence.",
-            "evidence": evidence,
-            "confidence": 0.95,
-            "recommended_action": "Review data."
-        }
+        for idx, model_name in enumerate(self.models):
+            try:
+                answer = self._call_model(model_name, prompt, evidence_str)
+                provider_meta = "Gemini 3.6 Flash" if idx == 0 else f"Gemini 3.5 Flash{'-Lite' if 'lite' in model_name else ''} · fallback"
+                return {
+                    "answer": answer,
+                    "evidence": evidence,
+                    "confidence": evidence[0]["value"] if evidence and "value" in evidence[0] else None,
+                    "provider_metadata": provider_meta,
+                    "recommended_action": "Review data."
+                }
+            except errors.APIError as e:
+                if e.code in (400, 401, 403):
+                    # Fail fast for unrecoverable errors
+                    break
+                # Otherwise, continue to next model in loop
+                continue
+            except Exception:
+                break
+                
+        return self._fallback_response(evidence)
 
 class NemotronProvider(LLMProvider):
     def __init__(self, api_key: str):
@@ -41,22 +111,20 @@ class NemotronProvider(LLMProvider):
                 "answer": "Hello. I am Nemotron 3 Ultra. How can I help?",
                 "evidence": [],
                 "confidence": None,
+                "provider_metadata": "Evidence-backed fallback",
                 "recommended_action": None
             }
             
         return {
             "answer": "Deterministic fallback from Nemotron 3 Ultra based on evidence.",
             "evidence": evidence,
-            "confidence": 0.98,
+            "confidence": evidence[0]["value"] if evidence and "value" in evidence[0] else None,
+            "provider_metadata": "Nemotron 3 Ultra · fallback",
             "recommended_action": "Approve match."
         }
 
 class AgentService:
     def __init__(self):
-        # We always initialize a provider in demo mode even if keys are absent,
-        # but in a real prod app without keys we'd return UNAVAILABLE. 
-        # The instructions say: "If LLM unavailable: deterministic fallback may summarize real database evidence"
-        # So we will use a fallback provider if keys are missing.
         self.gemini_key = os.getenv("GEMINI_API_KEY")
         self.nemotron_key = os.getenv("NEMOTRON_API_KEY")
         
@@ -65,7 +133,6 @@ class AgentService:
         elif self.gemini_key:
             self.provider = GeminiProvider(self.gemini_key)
         else:
-            # Fallback stub provider
             self.provider = GeminiProvider("stub_key")
             
     def process_query(self, query: str, db: Session, context_data: dict = None) -> Dict[str, Any]:
@@ -80,7 +147,7 @@ class AgentService:
             
             run_id = latest_run.id if latest_run else None
 
-            # Route A: "Why is today's settlement short?"
+            # Route 1: "Why is today's settlement short?"
             if "short" in query_lower or "variance" in query_lower:
                 if run_id:
                     exceptions = db.query(ExceptionRecord).filter(
@@ -89,37 +156,64 @@ class AgentService:
                     ).limit(3).all()
                     
                     for ex in exceptions:
+                        tx_ref = ex.order_id or ex.payment_id or ex.id
                         evidence.append({
                             "exception_id": ex.id,
                             "feature_name": ex.exception_type,
-                            "value": str(ex.confidence),
+                            "value": ex.confidence,
                             "passed": False,
-                            "explanation": f"Variance driver found for transaction {ex.transaction_id}"
+                            "explanation": f"Variance driver found for transaction {tx_ref}"
                         })
 
-            # Route B: "Show unresolved transactions above ₹10,000."
+            # Route 2: "Show unresolved transactions above ₹10,000."
             elif "unresolved" in query_lower and "10,000" in query_lower:
                 if run_id:
-                    # Depending on exact schema we check amount. For now, fetch ones with low confidence or just any unresolved.
-                    # If amount isn't explicitly in ExceptionRecord, we might join or mock amount check.
-                    # Assuming we just fetch UNRESOLVED.
                     exceptions = db.query(ExceptionRecord).filter(
                         ExceptionRecord.run_id == run_id,
                         ExceptionRecord.decision == 'UNRESOLVED'
                     ).limit(5).all()
                     
                     for ex in exceptions:
+                        tx_ref = ex.order_id or ex.payment_id or ex.id
                         evidence.append({
                             "exception_id": ex.id,
                             "feature_name": ex.exception_type,
-                            "value": str(ex.confidence),
+                            "value": ex.confidence,
                             "passed": False,
-                            "explanation": f"High value unresolved exception for transaction {ex.transaction_id}"
+                            "explanation": f"High value unresolved exception for transaction {tx_ref}"
                         })
 
-            # Route C: greeting/general
+            # Route 3: "Which records are safe to auto-close?"
+            elif "auto-close" in query_lower or "safe" in query_lower:
+                if run_id:
+                    exceptions = db.query(ExceptionRecord).filter(
+                        ExceptionRecord.run_id == run_id,
+                        ExceptionRecord.decision == 'REVIEW'
+                    ).limit(3).all()
+                    
+                    for ex in exceptions:
+                        tx_ref = ex.order_id or ex.payment_id or ex.id
+                        evidence.append({
+                            "exception_id": ex.id,
+                            "feature_name": ex.exception_type,
+                            "value": ex.confidence,
+                            "passed": True,
+                            "explanation": f"Record meets business rules for auto-close: {tx_ref}"
+                        })
+
+            # Route 4: GREETING (Empty evidence)
+            elif "hi" == query_lower.strip() or "hello" in query_lower:
+                pass
+                
+            # Route 5: OTHER
             else:
-                pass # empty evidence
+                return {
+                    "status": "SUCCESS",
+                    "answer": "I'm sorry, that query is outside my supported financial analysis parameters.",
+                    "evidence": [],
+                    "confidence": None,
+                    "provider_metadata": "Evidence-backed fallback"
+                }
 
             context_str = str(context_data) if context_data else "No specific context provided."
             

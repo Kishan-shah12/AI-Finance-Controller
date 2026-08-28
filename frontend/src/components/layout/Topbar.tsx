@@ -16,7 +16,7 @@ export function Topbar() {
         </Badge>
 
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground border rounded-md px-3 py-1.5 bg-muted/30">
-          <span className="font-medium">Aug 26, 2026</span>
+          <span className="font-medium">Demo data · Aug 26, 2026</span>
           <ChevronDown className="h-3 w-3" />
         </div>
 
