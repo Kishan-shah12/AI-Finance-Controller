@@ -1,11 +1,41 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit, ArrowRight, MessageSquareText, FileText, Search } from "lucide-react";
 
 export default function SettlementIntelligence() {
+  const router = useRouter();
+  const [exceptionId, setExceptionId] = useState<string | null>(null);
+  const [loadingEv, setLoadingEv] = useState(true);
+
+  useEffect(() => {
+    async function loadEvidence() {
+      try {
+        const demoRun = await api.getLatestDemoRun();
+        if (demoRun && demoRun.run_id) {
+          const exId = await api.getHighestPriorityExceptionId(demoRun.run_id);
+          setExceptionId(exId);
+        }
+      } catch (e) {
+        console.error("Failed to load evidence ID", e);
+      } finally {
+        setLoadingEv(false);
+      }
+    }
+    loadEvidence();
+  }, []);
+
+  const handleViewEvidence = () => {
+    if (exceptionId) {
+      router.push(`/exceptions/${exceptionId}`);
+    }
+  };
+
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       
@@ -95,8 +125,13 @@ export default function SettlementIntelligence() {
               Standard gateway fees and taxes account for the majority (-₹7,552). However, <span className="font-semibold text-destructive">four transactions remain unresolved</span> due to missing fee evidence, contributing exactly ₹4,848 to the shortfall.
             </div>
             
-            <Button className="bg-ai text-white hover:bg-ai/90 font-semibold w-full sm:w-auto">
-              <FileText className="mr-2 h-4 w-4" /> View Evidence
+            <Button 
+              className="bg-ai text-white hover:bg-ai/90 font-semibold w-full sm:w-auto"
+              onClick={handleViewEvidence}
+              disabled={loadingEv || !exceptionId}
+            >
+              <FileText className="mr-2 h-4 w-4" /> 
+              {loadingEv ? "Loading Evidence..." : "View Evidence"}
             </Button>
           </CardContent>
         </Card>
