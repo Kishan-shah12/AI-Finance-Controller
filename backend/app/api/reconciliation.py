@@ -129,12 +129,18 @@ def execute_reconciliation_run(run_id: str, request: RunRequest):
                 
                 # Add evidence
                 for ev_data in res.evidence:
+                    val = ev_data.value
+                    if isinstance(val, (int, float)):
+                        parsed_val = float(val)
+                    else:
+                        parsed_val = 0.0
+                        
                     ev = ExceptionEvidence(
                         exception_id=ex.id,
-                        feature_name=ev_data.get("feature", "unknown"),
-                        value=ev_data.get("value", 0),
-                        passed=ev_data.get("passed", False),
-                        explanation=f"Threshold: {ev_data.get('threshold', 0)}"
+                        feature_name=ev_data.field,
+                        value=parsed_val,
+                        passed=0,
+                        explanation=ev_data.explanation
                     )
                     db.add(ev)
                 
