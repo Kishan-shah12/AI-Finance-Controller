@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrainCircuit, Send, Sparkles, User, FileText, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, Suspense } from "react";
 
-export default function AgentPage() {
+function AgentChat() {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<{role: 'user'|'agent', content: any}[]>([
     {
@@ -25,18 +27,28 @@ export default function AgentPage() {
       }
     }
   ]);
+  const searchParams = useSearchParams();
+  const autoSubmitRef = useRef(false);
 
-  const handleSend = async () => {
-    if (!query.trim()) return;
+  useEffect(() => {
+    const urlQuery = searchParams.get("q");
+    if (urlQuery && !autoSubmitRef.current) {
+      autoSubmitRef.current = true;
+      setQuery(urlQuery);
+      // We need to pass urlQuery directly because state update is async
+      executeSearch(urlQuery);
+    }
+  }, [searchParams]);
+
+  const executeSearch = async (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
     
     // Add user message
-    const newMessages = [...messages, { role: 'user' as const, content: { text: query } }];
-    setMessages(newMessages);
-    const currentQuery = query;
+    setMessages(prev => [...prev, { role: 'user' as const, content: { text: searchQuery } }]);
     setQuery("");
 
     try {
-      const response = await api.queryAgent(currentQuery);
+      const response = await api.queryAgent(searchQuery);
       
       if (response.status === 'AGENT_UNAVAILABLE') {
         setMessages(prev => [...prev, {
@@ -64,6 +76,10 @@ export default function AgentPage() {
         content: { text: "Error communicating with the agent backend." }
       }]);
     }
+  };
+
+  const handleSend = () => {
+    executeSearch(query);
   };
 
   return (
@@ -208,5 +224,13 @@ export default function AgentPage() {
       </div>
       
     </div>
+  );
+}
+
+export default function AgentPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Loading AI Controller...</div>}>
+      <AgentChat />
+    </Suspense>
   );
 }
