@@ -338,8 +338,16 @@ export default function DemoPage() {
                   <p className="text-sm text-muted-foreground mb-2">Highest Priority Unresolved Exception</p>
                   <p className="font-mono text-lg font-medium">{highestPriorityExceptionId}</p>
                 </div>
-                <Button size="lg" onClick={() => router.push(`/exceptions/${highestPriorityExceptionId}`)}>
-                  INVESTIGATE
+                <Button 
+                  size="lg" 
+                  disabled={!highestPriorityExceptionId}
+                  onClick={() => {
+                    if (highestPriorityExceptionId) {
+                      router.push(`/exceptions/${highestPriorityExceptionId}`);
+                    }
+                  }}
+                >
+                  Investigate Top Priority
                 </Button>
               </CardContent>
             </Card>

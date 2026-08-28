@@ -59,6 +59,9 @@ export const api = {
   },
   
   getExceptionDetail: async (id: string): Promise<ExceptionItem> => {
+    if (!id || id === "undefined" || id === "null") {
+      throw new Error("Invalid exception ID");
+    }
     try {
       const response = await apiClient.get<ExceptionItem>(`/exceptions/${id}`);
       return response.data;
