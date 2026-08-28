@@ -106,23 +106,41 @@ export default function AgentPage() {
                 </div>
               )}
 
-              {msg.content.evidence && (
+              {msg.content.evidence && msg.content.evidence.length > 0 ? (
                 <div className="p-4 rounded-xl border border-ai/30 bg-ai/5 shadow-sm text-sm">
                   <div className="text-xs font-bold uppercase tracking-widest mb-3 text-ai flex items-center gap-1.5">
                     <FileText className="h-3 w-3" /> Evidence
                   </div>
                   <div className="space-y-2">
-                    {msg.content.evidence.map((ev: any, i: number) => (
-                      <Link key={i} href={`/exceptions/${ev.id}`} className="flex items-center gap-2 group">
-                        <Badge variant="outline" className="bg-background group-hover:border-ai transition-colors">{ev.id}</Badge>
-                        <span className="text-muted-foreground group-hover:text-foreground transition-colors">{ev.reason}</span>
-                      </Link>
-                    ))}
+                    {msg.content.evidence.map((ev: any, i: number) => {
+                      const displayId = ev.exception_id || ev.id || "N/A";
+                      const displayText = ev.explanation || ev.reason || ev.feature_name || "Evidence provided";
+                      
+                      if (ev.exception_id) {
+                        return (
+                          <Link key={i} href={`/exceptions/${ev.exception_id}`} className="flex items-center gap-2 group">
+                            <Badge variant="outline" className="bg-background group-hover:border-ai transition-colors">{displayId.split('-')[0]}</Badge>
+                            <span className="text-muted-foreground group-hover:text-foreground transition-colors">{displayText}</span>
+                          </Link>
+                        );
+                      } else {
+                        return (
+                          <div key={i} className="flex items-center gap-2 opacity-70">
+                            <Badge variant="outline" className="bg-background/50">{displayId.split('-')[0]}</Badge>
+                            <span className="text-muted-foreground">{displayText}</span>
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
-              )}
+              ) : msg.content.evidence ? (
+                <div className="p-4 rounded-xl border border-muted bg-muted/20 shadow-sm text-sm text-muted-foreground italic">
+                  No supporting evidence found for this query.
+                </div>
+              ) : null}
 
-              {msg.content.confidence && (
+              {msg.content.confidence !== null && msg.content.confidence !== undefined && (
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <span className="font-bold text-foreground">{formatPercent(msg.content.confidence)}</span> Confidence
