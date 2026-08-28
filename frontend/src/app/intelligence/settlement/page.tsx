@@ -155,8 +155,12 @@ export default function SettlementIntelligence() {
 }
 
 function QuestionCard({ q }: { q: string }) {
+  const router = useRouter();
   return (
-    <div className="p-4 border rounded-lg bg-card hover:border-ai/50 hover:bg-ai/5 transition-colors cursor-pointer group flex items-start justify-between">
+    <div 
+      onClick={() => router.push(`/agent?q=${encodeURIComponent(q)}`)}
+      className="p-4 border rounded-lg bg-card hover:border-ai/50 hover:bg-ai/5 transition-colors cursor-pointer group flex items-start justify-between"
+    >
       <span className="text-sm font-medium group-hover:text-ai transition-colors">{q}</span>
       <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-ai shrink-0 mt-0.5" />
     </div>
