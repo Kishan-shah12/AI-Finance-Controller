@@ -53,6 +53,7 @@ export default function AgentPage() {
             text: response.answer,
             evidence: response.evidence,
             confidence: response.confidence,
+            provider_metadata: response.provider_metadata,
             recommendation: response.recommended_action
           }
         }]);
@@ -140,10 +141,18 @@ export default function AgentPage() {
                 </div>
               ) : null}
 
-              {msg.content.confidence !== null && msg.content.confidence !== undefined && (
-                <div className="flex items-center gap-4 text-sm">
+              {(msg.content.confidence !== undefined || msg.content.provider_metadata) && (
+                <div className="flex flex-wrap items-center gap-4 text-sm mt-2 pt-2 border-t border-muted/50">
+                  {msg.content.provider_metadata && (
+                    <div className="text-xs font-medium text-muted-foreground bg-muted/30 px-2 py-1 rounded">
+                      {msg.content.provider_metadata}
+                    </div>
+                  )}
                   <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <span className="font-bold text-foreground">{formatPercent(msg.content.confidence)}</span> Confidence
+                    <span className="font-bold text-foreground">
+                      {msg.content.confidence !== null ? formatPercent(msg.content.confidence) : 'Confidence unavailable'}
+                    </span>
+                    {msg.content.confidence !== null && <span>Evidence confidence</span>}
                   </div>
                   {msg.content.recommendation && (
                     <div className="flex items-center gap-1.5 text-success">
