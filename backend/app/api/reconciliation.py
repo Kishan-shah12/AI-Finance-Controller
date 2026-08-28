@@ -19,7 +19,11 @@ class RunRequest(BaseModel):
     size: int = 1000
     seed: int = 42
 
-def execute_reconciliation_run(run_id: str, request: RunRequest, db: Session):
+def execute_reconciliation_run(run_id: str, request: RunRequest):
+    from app.db.database import SessionLocal
+    import traceback
+    
+    db = SessionLocal()
     try:
         start_time = time.time()
         
@@ -54,7 +58,6 @@ def execute_reconciliation_run(run_id: str, request: RunRequest, db: Session):
             
         # 3. Setup Engine for Demo/Test
         demo_thresholds = ReconciliationThresholds(
-            auto_match_min=0.80,
             verified_match_min=0.99,
             explainable_variance_min=0.80,
             review_min=0.40,
@@ -154,7 +157,9 @@ def execute_reconciliation_run(run_id: str, request: RunRequest, db: Session):
         if run_record:
             run_record.status = "FAILED"
             db.commit()
-        print(f"Run failed: {e}")
+        print(f"Run failed: {e}\n{traceback.format_exc()}")
+    finally:
+        db.close()
 
 @router.post("/run")
 def start_reconciliation_run(req: RunRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -184,7 +189,7 @@ def start_reconciliation_run(req: RunRequest, background_tasks: BackgroundTasks,
     db.add(audit)
     db.commit()
     
-    background_tasks.add_task(execute_reconciliation_run, run_id, req, db)
+    background_tasks.add_task(execute_reconciliation_run, run_id, req)
     
     return {
         "run_id": run_id,
