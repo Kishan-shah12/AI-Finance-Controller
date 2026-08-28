@@ -1,34 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { MetricData, ExceptionItem } from "@/lib/types";
 import { formatPercent, formatINR, cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShieldAlert, CheckCircle2, AlertTriangle, Info, ArrowRight, Activity, Zap, Play } from "lucide-react";
+import { ShieldAlert, CheckCircle2, AlertTriangle, Info, ArrowRight, Activity, Zap, Play, Database, RotateCw } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<MetricData | null>(null);
   const [exceptions, setExceptions] = useState<ExceptionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorState, setErrorState] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setErrorState(null);
+    try {
+      const [m, e] = await Promise.all([
+        api.getEvaluationMetrics(),
+        api.getExceptions().catch(() => [])
+      ]);
+      setMetrics(m);
+      setExceptions(e.slice(0, 5));
+    } catch (err: any) {
+      if (err instanceof ApiError || (err && err.type)) {
+        setErrorState(err.type);
+      } else {
+        setErrorState('API_ERROR');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [m, e] = await Promise.all([
-          api.getEvaluationMetrics(),
-          api.getExceptions()
-        ]);
-        setMetrics(m);
-        setExceptions(e.slice(0, 5)); // Top 5
-      } catch (err) {
-        console.error("Failed to load dashboard data", err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchData();
   }, []);
 
@@ -36,8 +45,45 @@ export default function Dashboard() {
     return <div className="p-8 flex items-center justify-center text-muted-foreground">Loading intelligence...</div>;
   }
 
-  if (!metrics) {
-    return <div className="p-8 text-destructive">Failed to load dashboard data. Backend may be offline.</div>;
+  if (errorState === 'NO_DATA_YET') {
+    return (
+      <div className="p-8 max-w-3xl mx-auto mt-20 text-center space-y-6 animate-in fade-in duration-500">
+        <div className="bg-primary/5 inline-flex p-6 rounded-full border border-primary/10">
+          <Database className="h-12 w-12 text-primary opacity-80" />
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight uppercase">No Reconciliation Data Yet</h2>
+        <p className="text-muted-foreground text-lg max-w-md mx-auto leading-relaxed">
+          Run your first reconciliation batch to populate the finance control center.
+        </p>
+        <div className="pt-4">
+          <Link href="/reconciliation">
+            <Button size="lg" className="font-bold tracking-wider px-8 h-12 text-sm uppercase">
+              Run Reconciliation
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (errorState === 'API_ERROR' || errorState === 'CONNECTION_ERROR' || !metrics) {
+    const errorMsg = errorState === 'CONNECTION_ERROR' 
+      ? 'Unable to reach the ReconAI backend.' 
+      : (errorState === 'API_ERROR' ? 'ReconAI encountered a temporary server error.' : 'ReconAI backend is unavailable.');
+    
+    return (
+      <div className="p-8 max-w-3xl mx-auto mt-20 text-center space-y-6 animate-in fade-in duration-500">
+        <div className="bg-destructive/10 inline-flex p-6 rounded-full border border-destructive/20">
+          <AlertTriangle className="h-12 w-12 text-destructive opacity-80" />
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight text-destructive">{errorMsg}</h2>
+        <div className="pt-4">
+          <Button variant="outline" onClick={fetchData} className="flex items-center gap-2 mx-auto font-bold tracking-wider px-8 h-12 text-sm uppercase">
+            <RotateCw className="h-4 w-4" /> Retry
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
