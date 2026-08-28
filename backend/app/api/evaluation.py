@@ -7,8 +7,8 @@ router = APIRouter(prefix="/api/v1/evaluation", tags=["evaluation"])
 
 @router.get("/final")
 def get_final_evaluation():
-    root_dir = Path(__file__).resolve().parent.parent.parent.parent.parent
-    eval_dir = root_dir / 'backend' / 'evaluation' / 'final'
+    backend_dir = Path(__file__).resolve().parent.parent.parent
+    eval_dir = backend_dir / 'evaluation' / 'final'
     metrics_path = eval_dir / 'metrics.json'
     config_path = eval_dir / 'evaluation_config.json'
     
