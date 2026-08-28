@@ -28,6 +28,7 @@ default_origins = [
     "http://localhost:3000",
     "https://reconai-3r0e9x0jx-kishan-sah-s-projects.vercel.app",
     "https://reconai-3r0e9x0jx-kishan-s-projects.vercel.app",
+    "https://reconai-gamma.vercel.app",
 ]
 for origin in default_origins:
     if origin not in allowed_origins:
