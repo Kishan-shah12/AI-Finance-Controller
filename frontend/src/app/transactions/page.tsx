@@ -11,11 +11,11 @@ import { formatINR } from "@/lib/utils";
 export default function TransactionsPage() {
   // Mock transactions for UI layout
   const txs = [
-    { id: "TX-9021", order: "ORD-123", amount: 4500, decision: "VERIFIED_MATCH", conf: 0.99 },
-    { id: "TX-9022", order: "ORD-124", amount: 12000, decision: "MATCH_WITH_EXPLAINABLE_VARIANCE", conf: 0.95 },
-    { id: "TX-9023", order: "ORD-125", amount: 50000, decision: "REVIEW", conf: 0.65 },
-    { id: "TX-9024", order: "ORD-126", amount: 8900, decision: "VERIFIED_MATCH", conf: 0.98 },
-    { id: "TX-9025", order: "ORD-127", amount: 145000, decision: "UNRESOLVED", conf: 0.20 },
+    { id: "TX-9021", order: "ORD-123", amount: 4500, decision: "VERIFIED_MATCH", conf: 0.99, exception_id: null },
+    { id: "TX-9022", order: "ORD-124", amount: 12000, decision: "MATCH_WITH_EXPLAINABLE_VARIANCE", conf: 0.95, exception_id: null },
+    { id: "TX-9023", order: "ORD-125", amount: 50000, decision: "REVIEW", conf: 0.65, exception_id: null },
+    { id: "TX-9024", order: "ORD-126", amount: 8900, decision: "VERIFIED_MATCH", conf: 0.98, exception_id: null },
+    { id: "TX-9025", order: "ORD-127", amount: 145000, decision: "UNRESOLVED", conf: 0.20, exception_id: null },
   ];
 
   return (
@@ -47,21 +47,33 @@ export default function TransactionsPage() {
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/30 hover:bg-muted/30">
-                <TableHead className="w-[120px]">Scenario ID</TableHead>
-                <TableHead>Order Ref</TableHead>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead>Transaction ID</TableHead>
+                <TableHead>Source Order</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Confidence</TableHead>
                 <TableHead>Decision</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {txs.map((tx) => (
-                <TableRow key={tx.id} className="group cursor-pointer hover:bg-muted/50 transition-colors">
-                  <TableCell className="font-mono text-xs">{tx.id}</TableCell>
+                <TableRow key={tx.id} className="group cursor-pointer">
+                  <TableCell className="font-medium font-mono text-xs">{tx.id}</TableCell>
                   <TableCell className="font-mono text-xs text-muted-foreground">{tx.order}</TableCell>
-                  <TableCell className="text-right font-medium">{formatINR(tx.amount)}</TableCell>
+                  <TableCell className="text-right">{formatINR(tx.amount)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-16 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full ${tx.conf > 0.9 ? 'bg-success' : tx.conf > 0.6 ? 'bg-amber-500' : 'bg-destructive'}`} 
+                          style={{ width: `${tx.conf * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-muted-foreground">{Math.round(tx.conf * 100)}%</span>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={
                       tx.decision === "VERIFIED_MATCH" ? "bg-success/10 text-success border-success/20" :
@@ -73,8 +85,8 @@ export default function TransactionsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {tx.decision === "REVIEW" || tx.decision === "UNRESOLVED" ? (
-                      <Link href={`/exceptions/${tx.id}`}>
+                    {tx.exception_id && (tx.decision === "REVIEW" || tx.decision === "UNRESOLVED") ? (
+                      <Link href={`/exceptions/${tx.exception_id}`}>
                         <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
                       </Link>
                     ) : (
