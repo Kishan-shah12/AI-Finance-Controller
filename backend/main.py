@@ -8,7 +8,7 @@ from app.db.database import init_db, get_db
 from app.providers.razorpay_provider import RazorpayProvider
 
 # Routers
-from app.api import evaluation, reconciliation, exceptions, agent, providers
+from app.api import evaluation, reconciliation, exceptions, agent, providers, audit
 
 from contextlib import asynccontextmanager
 
@@ -51,6 +51,7 @@ app.include_router(reconciliation.router)
 app.include_router(exceptions.router)
 app.include_router(agent.router)
 app.include_router(providers.router)
+app.include_router(audit.router)
 
 @app.get("/")
 def read_root():

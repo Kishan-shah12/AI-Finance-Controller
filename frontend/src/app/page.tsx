@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<MetricData | null>(null);
   const [exceptions, setExceptions] = useState<ExceptionItem[]>([]);
+  const [totalExceptionCount, setTotalExceptionCount] = useState(0);
+  const [totalVarianceSum, setTotalVarianceSum] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorState, setErrorState] = useState<string | null>(null);
 
@@ -26,6 +28,12 @@ export default function Dashboard() {
       ]);
       setMetrics(m);
       setExceptions(e.slice(0, 5));
+      setTotalExceptionCount(e.length);
+      const varianceSum = e.reduce((sum: number, item: ExceptionItem) => {
+        const diff = item.variance_details?.amount_difference ?? item.variance_details?.difference ?? 0;
+        return sum + Math.abs(diff);
+      }, 0);
+      setTotalVarianceSum(varianceSum);
     } catch (err: any) {
       if (err instanceof ApiError || (err && err.type)) {
         setErrorState(err.type);
@@ -259,25 +267,34 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Settlement Pulse</CardTitle>
+              <CardDescription>Live reconciliation health & variance summary</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-end">
-                  <div className="text-sm text-muted-foreground">Expected</div>
-                  <div className="font-semibold tabular-nums text-lg">₹8,72,000</div>
+                  <div className="text-sm text-muted-foreground">Scenarios Evaluated</div>
+                  <div className="font-semibold tabular-nums text-lg">{metrics.total_scenarios.toLocaleString()}</div>
                 </div>
                 <div className="flex justify-between items-end border-b pb-2">
-                  <div className="text-sm text-muted-foreground">Actual (Bank)</div>
-                  <div className="font-semibold tabular-nums text-lg">₹8,60,000</div>
+                  <div className="text-sm text-muted-foreground">Operational Match Rate</div>
+                  <div className="font-semibold tabular-nums text-lg text-success">{formatPercent(metrics.operational_match_rate)}</div>
                 </div>
                 <div className="flex justify-between items-end pt-1">
-                  <div className="text-sm font-medium">Variance</div>
-                  <div className="font-bold tabular-nums text-destructive text-xl">-₹12,000</div>
+                  <div className="text-sm font-medium">Unresolved Exceptions</div>
+                  <div className="font-bold tabular-nums text-destructive text-xl">
+                    {totalExceptionCount > 0 ? `${totalExceptionCount} cases` : formatPercent(metrics.exception_rate)}
+                  </div>
                 </div>
+                {totalVarianceSum !== null && totalVarianceSum > 0 && (
+                  <div className="flex justify-between items-end text-xs text-muted-foreground pt-1">
+                    <span>Unexplained Variance:</span>
+                    <span className="font-mono font-medium text-destructive">{formatINR(totalVarianceSum)}</span>
+                  </div>
+                )}
                 <div className="pt-2">
-                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden flex">
-                    <div className="bg-success h-full" style={{ width: '98%' }}></div>
-                    <div className="bg-destructive h-full" style={{ width: '2%' }}></div>
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden flex" title="Match vs Exception distribution">
+                    <div className="bg-success h-full" style={{ width: `${Math.min(100, Math.round(metrics.operational_match_rate * 100))}%` }}></div>
+                    <div className="bg-destructive h-full" style={{ width: `${Math.min(100, Math.round(metrics.exception_rate * 100))}%` }}></div>
                   </div>
                 </div>
               </div>

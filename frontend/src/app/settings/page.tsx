@@ -62,28 +62,36 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
         <div className="md:col-span-1 space-y-4">
-          <nav className="flex flex-col space-y-1">
+          <nav className="flex flex-col space-y-1" role="tablist" aria-label="Settings navigation">
             <button 
+              role="tab"
+              aria-selected={activeTab === 'automation'}
               onClick={() => handleTabChange("automation")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors ${activeTab === 'automation' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'automation' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               Automation Policy
             </button>
             <button 
+              role="tab"
+              aria-selected={activeTab === 'providers'}
               onClick={() => handleTabChange("providers")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors ${activeTab === 'providers' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'providers' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               Providers
             </button>
             <button 
+              role="tab"
+              aria-selected={activeTab === 'system'}
               onClick={() => handleTabChange("system")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors ${activeTab === 'system' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'system' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               System Status
             </button>
             <button 
+              role="tab"
+              aria-selected={activeTab === 'demo'}
               onClick={() => handleTabChange("demo")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors ${activeTab === 'demo' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'demo' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               Demo Mode
             </button>
@@ -211,7 +219,7 @@ export default function SettingsPage() {
                       <Activity className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">LLM Provider (Anthropic)</p>
+                      <p className="font-medium text-sm">LLM Provider (Google Gemini)</p>
                       <p className="text-xs text-muted-foreground">Intelligence Engine</p>
                     </div>
                   </div>
