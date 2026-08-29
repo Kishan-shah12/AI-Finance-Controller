@@ -69,9 +69,9 @@ export default function ExceptionDetail() {
           </p>
         </div>
         <div className="text-right">
-          <div className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-1">Disputed Amount</div>
+          <div className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-1">Variance</div>
           <div className="text-3xl font-bold text-destructive tabular-nums">
-            {formatINR(exception.variance_details?.amount_difference || 50000)}
+            {formatINR(exception.variance_details?.amount_difference ?? exception.variance_details?.difference)}
           </div>
         </div>
       </div>
@@ -89,30 +89,24 @@ export default function ExceptionDetail() {
             <div className="space-y-8 relative">
               <ChainNode 
                 label="ORDER" 
-                id="ORD-12345" 
-                amount={50000} 
                 status="Confirmed" 
                 time="10:02 AM" 
               />
               <ChainNode 
                 label="PAYMENT" 
-                id="PAY-98765" 
-                amount={50000} 
                 status="Authorized" 
                 time="10:05 AM" 
+                amount={exception.variance_details?.expected}
               />
               <ChainNode 
                 label="SETTLEMENT" 
-                id="SET-55443" 
-                amount={48500} 
                 status="Processed" 
                 time="2 days later" 
+                amount={exception.variance_details?.actual}
                 warning
               />
               <ChainNode 
                 label="BANK" 
-                id="BNK-11223" 
-                amount={48500} 
                 status="Credited" 
                 time="2 days later" 
                 warning
@@ -139,8 +133,7 @@ export default function ExceptionDetail() {
               <div className="space-y-2">
                 <h4 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Why didn't ReconAI automatically close this?</h4>
                 <div className="text-lg leading-relaxed text-foreground">
-                  Payment and settlement references are consistent. The settlement is {formatINR(1500)} below the payment amount. 
-                  <span className="text-destructive font-medium bg-destructive/10 px-1 rounded ml-1">The available fee/tax evidence does not fully explain the variance.</span> 
+                  {exception.variance_details?.explanation || (exception.evidence && exception.evidence.length > 0 ? "Evidence failed verification thresholds." : "No additional explanation provided by the AI Engine.")}
                   <br/><br/>ReconAI therefore recommends human review to prevent a forced match.
                 </div>
               </div>
@@ -210,7 +203,7 @@ export default function ExceptionDetail() {
   );
 }
 
-function ChainNode({ label, id, amount, status, time, warning = false }: { label: string, id: string, amount: number, status: string, time: string, warning?: boolean }) {
+function ChainNode({ label, id, amount, status, time, warning = false }: { label: string, id?: string | null, amount?: number | null, status: string, time: string, warning?: boolean }) {
   return (
     <div className="flex items-center gap-4 relative z-10">
       <div className={cn(
@@ -225,7 +218,7 @@ function ChainNode({ label, id, amount, status, time, warning = false }: { label
       )}>
         <div>
           <div className="text-xs font-bold text-muted-foreground tracking-wider uppercase mb-1">{label}</div>
-          <div className="font-mono text-sm">{id}</div>
+          <div className="font-mono text-sm">{id || "Unavailable"}</div>
           <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
             <Clock className="h-3 w-3" /> {time} <span className="bg-muted px-1.5 rounded">{status}</span>
           </div>
@@ -234,7 +227,7 @@ function ChainNode({ label, id, amount, status, time, warning = false }: { label
           "text-lg font-bold tabular-nums",
           warning ? "text-destructive" : "text-foreground"
         )}>
-          {formatINR(amount)}
+          {amount != null ? formatINR(amount) : "—"}
         </div>
       </div>
     </div>
