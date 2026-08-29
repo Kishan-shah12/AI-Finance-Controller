@@ -80,12 +80,12 @@ export const api = {
     }
   },
 
-  startReconciliationRun: async (mode: 'demo' | 'evaluation' = 'demo', provider: 'SYNTHETIC' | 'RAZORPAY_TEST' = 'SYNTHETIC'): Promise<any> => {
+  startReconciliationRun: async (mode: 'demo' | 'evaluation' = 'demo', provider: 'SYNTHETIC' | 'RAZORPAY_TEST' = 'SYNTHETIC', size: number = 1000): Promise<any> => {
     try {
       const response = await apiClient.post("/reconciliation/run", {
         mode,
         provider,
-        size: 1000,
+        size,
         seed: 42
       });
       return response.data;
