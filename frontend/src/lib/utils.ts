@@ -5,7 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatINR(amount: number): string {
+export function formatINR(amount: number | null | undefined): string {
+  if (amount == null || Number.isNaN(amount)) return "—"
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -13,7 +14,8 @@ export function formatINR(amount: number): string {
   }).format(amount)
 }
 
-export function formatPercent(value: number, decimals: number = 1): string {
+export function formatPercent(value: number | null | undefined, decimals: number = 1): string {
+  if (value == null || Number.isNaN(value)) return "N/A"
   return new Intl.NumberFormat('en-IN', {
     style: 'percent',
     minimumFractionDigits: decimals,

@@ -28,11 +28,13 @@ def get_final_evaluation():
         "operational_match_rate": metrics.get("operational_match_rate"),
         "strict_verified_match_rate": metrics.get("strict_verified_match_rate"),
         "auto_match_rate": metrics.get("auto_match_rate"),
-        "precision": metrics.get("precision"),
-        "recall": metrics.get("recall"),
-        "f1": metrics.get("f1"),
+        "standard_precision": metrics.get("standard_precision"),
+        "overall_match_recall": metrics.get("overall_match_recall"),
+        "standard_f1": metrics.get("standard_f1"),
+        "safe_auto_match_precision": metrics.get("safe_auto_match_precision"),
+        "safe_auto_match_recall": metrics.get("safe_auto_match_recall"),
         "false_match_rate": metrics.get("false_match_rate"),
         "review_rate": metrics.get("review_rate"),
         "exception_rate": metrics.get("exception_rate"),
-        "throughput": metrics.get("core_engine_throughput")
+        "core_engine_throughput": metrics.get("core_engine_throughput")
     }
