@@ -81,7 +81,7 @@ def execute_reconciliation_run(run_id: str, request: RunRequest):
         # 5. Persist run results
         run_record.status = "COMPLETED"
         run_record.records_processed = result['metrics']['records_processed']
-        run_record.scenario_count = request.size
+        run_record.scenario_count = len(result['results'])
         run_record.verified_match = dist.get("VERIFIED_MATCH", 0)
         run_record.explainable_variance = dist.get("MATCH_WITH_EXPLAINABLE_VARIANCE", 0)
         run_record.review = dist.get("REVIEW", 0)

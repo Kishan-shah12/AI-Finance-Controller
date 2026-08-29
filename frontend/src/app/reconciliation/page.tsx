@@ -28,7 +28,8 @@ export default function ReconciliationCommandCenter() {
     setIsComplete(false);
     
     try {
-      const run = await api.startReconciliationRun('demo', provider);
+      const runSize = provider === 'SYNTHETIC' ? 1000 : 100;
+      const run = await api.startReconciliationRun('demo', provider, runSize);
       const runId = run.run_id;
       
       const pollInterval = setInterval(async () => {
@@ -38,21 +39,22 @@ export default function ReconciliationCommandCenter() {
             clearInterval(pollInterval);
             
             if (status.status === 'COMPLETED') {
+              const validRecords = status.records_processed || 1;
               setMetrics({
                 dataset_version: "v1_demo",
                 model_version: "v1_demo",
-                total_scenarios: status.scenario_count,
-                operational_match_rate: (status.verified_match + status.explainable_variance) / status.scenario_count,
-                strict_verified_match_rate: status.verified_match / status.scenario_count,
-                auto_match_rate: (status.verified_match + status.explainable_variance) / status.scenario_count,
+                total_scenarios: status.records_processed,
+                operational_match_rate: (status.verified_match + status.explainable_variance) / validRecords,
+                strict_verified_match_rate: status.verified_match / validRecords,
+                auto_match_rate: (status.verified_match + status.explainable_variance) / validRecords,
                 standard_precision: 0.99,
                 overall_match_recall: 0.99,
                 standard_f1: 0.99,
                 safe_auto_match_precision: 0.99,
                 safe_auto_match_recall: 0.99,
                 false_match_rate: 0.0,
-                review_rate: status.review / status.scenario_count,
-                exception_rate: status.unresolved / status.scenario_count,
+                review_rate: status.review / validRecords,
+                exception_rate: status.unresolved / validRecords,
                 core_engine_throughput: status.throughput
               });
               setIsComplete(true);
@@ -193,18 +195,31 @@ export default function ReconciliationCommandCenter() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <ResultCard title="Records Processed" value={metrics.total_scenarios.toLocaleString()} icon={FileText} />
-            <ResultCard title="Verified Matches" value={formatPercent(metrics.strict_verified_match_rate)} icon={CheckCircle2} success />
-            <ResultCard title="Manual Review" value={formatPercent(metrics.review_rate)} icon={ShieldAlert} warning />
-            <ResultCard title="Unresolved" value={formatPercent(metrics.exception_rate)} icon={AlertTriangle} danger />
+            <ResultCard title="Verified Matches" value={metrics.total_scenarios === 0 ? "N/A" : formatPercent(metrics.strict_verified_match_rate)} icon={CheckCircle2} success />
+            <ResultCard title="Manual Review" value={metrics.total_scenarios === 0 ? "N/A" : formatPercent(metrics.review_rate)} icon={ShieldAlert} warning />
+            <ResultCard title="Unresolved" value={metrics.total_scenarios === 0 ? "N/A" : formatPercent(metrics.exception_rate)} icon={AlertTriangle} danger />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          {metrics.total_scenarios === 0 && provider === 'RAZORPAY_TEST' && (
+            <div className="bg-muted/30 border rounded-lg p-4 text-center mt-4">
+              <p className="text-muted-foreground">No Razorpay Test data available for reconciliation.</p>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-4 items-center">
+            {metrics.total_scenarios === 0 && provider === 'RAZORPAY_TEST' && (
+              <span className="text-sm text-muted-foreground mr-2">No Razorpay exceptions found.</span>
+            )}
             <Link href="/metrics">
               <Button variant="outline">View Metrics</Button>
             </Link>
-            <Link href="/exceptions">
-              <Button className="bg-primary text-primary-foreground">Investigate Exceptions</Button>
-            </Link>
+            {metrics.total_scenarios === 0 || metrics.exception_rate === 0 ? (
+              <Button className="bg-primary text-primary-foreground opacity-50" disabled>Investigate Exceptions</Button>
+            ) : (
+              <Link href="/exceptions">
+                <Button className="bg-primary text-primary-foreground">Investigate Exceptions</Button>
+              </Link>
+            )}
           </div>
         </div>
       )}
