@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 export default function ExceptionsPage() {
   const [exceptions, setExceptions] = useState<ExceptionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterDecision, setFilterDecision] = useState<string>("ALL");
 
   useEffect(() => {
     async function fetchData() {
@@ -32,6 +34,17 @@ export default function ExceptionsPage() {
   if (loading) {
     return <div className="p-8 flex items-center justify-center text-muted-foreground">Loading exceptions queue...</div>;
   }
+
+  const filteredExceptions = exceptions.filter(ex => {
+    const matchesSearch = !searchQuery || 
+      (ex.id?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (ex.exception_type.toLowerCase().includes(searchQuery.toLowerCase().replace(/ /g, '_'))) ||
+      (ex.decision.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+    const matchesFilter = filterDecision === "ALL" || ex.decision === filterDecision;
+    
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -55,12 +68,23 @@ export default function ExceptionsPage() {
           <div className="flex items-center justify-between">
             <div className="relative w-72">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search ID or reason..." className="pl-9 bg-background" />
+              <Input 
+                placeholder="Search ID or reason..." 
+                className="pl-9 bg-background" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <button className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
+            <select 
+              className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors appearance-none"
+              value={filterDecision}
+              onChange={(e) => setFilterDecision(e.target.value)}
+            >
+              <option value="ALL">All Decisions</option>
+              <option value="REVIEW">Review</option>
+              <option value="UNRESOLVED">Unresolved</option>
+              <option value="ESCALATED">Escalated</option>
+            </select>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -76,7 +100,7 @@ export default function ExceptionsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {exceptions.map((ex) => (
+              {filteredExceptions.map((ex) => (
                 <TableRow key={ex.id} className="group cursor-pointer hover:bg-muted/50 transition-colors">
                   <TableCell className="font-mono text-xs">{ex.id}</TableCell>
                   <TableCell>
@@ -103,8 +127,7 @@ export default function ExceptionsPage() {
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {/* Mock amount or fallback */}
-                    {formatINR(ex.variance_details?.amount_difference || 50000)}
+                    {formatINR(ex.variance_details?.amount_difference ?? ex.variance_details?.difference)}
                   </TableCell>
                   <TableCell className="text-right">
                     <Link href={`/exceptions/${ex.id}`}>
@@ -115,7 +138,7 @@ export default function ExceptionsPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {exceptions.length === 0 && (
+              {exceptions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
                     <div className="flex flex-col items-center justify-center gap-2">
@@ -124,7 +147,13 @@ export default function ExceptionsPage() {
                     </div>
                   </TableCell>
                 </TableRow>
-              )}
+              ) : filteredExceptions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                    <p>No matching exceptions.</p>
+                  </TableCell>
+                </TableRow>
+              ) : null}
             </TableBody>
           </Table>
         </CardContent>

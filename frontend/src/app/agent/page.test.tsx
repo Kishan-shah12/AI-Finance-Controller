@@ -8,6 +8,10 @@ jest.mock('@/lib/api', () => ({
   }
 }));
 
+jest.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 describe('Agent Page AI Evidence Rendering', () => {
   beforeEach(() => {
     jest.clearAllMocks();
