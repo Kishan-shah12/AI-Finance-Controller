@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,8 @@ import Link from "next/link";
 import { formatINR } from "@/lib/utils";
 
 export default function TransactionsPage() {
-  // Mock transactions for UI layout
+  const [searchQuery, setSearchQuery] = useState("");
+  const [decisionFilter, setDecisionFilter] = useState("ALL");
   const txs = [
     { id: "TX-9021", order: "ORD-123", amount: 4500, decision: "VERIFIED_MATCH", conf: 0.99, exception_id: null },
     { id: "TX-9022", order: "ORD-124", amount: 12000, decision: "MATCH_WITH_EXPLAINABLE_VARIANCE", conf: 0.95, exception_id: null },
@@ -17,6 +19,20 @@ export default function TransactionsPage() {
     { id: "TX-9024", order: "ORD-126", amount: 8900, decision: "VERIFIED_MATCH", conf: 0.98, exception_id: null },
     { id: "TX-9025", order: "ORD-127", amount: 145000, decision: "UNRESOLVED", conf: 0.20, exception_id: null },
   ];
+
+  const filteredTxs = txs.filter((tx) => {
+    const query = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      !query ||
+      tx.id.toLowerCase().includes(query) ||
+      tx.order.toLowerCase().includes(query) ||
+      tx.decision.toLowerCase().includes(query.replace(/ /g, '_'));
+
+    const matchesDecision =
+      decisionFilter === "ALL" || tx.decision === decisionFilter;
+
+    return matchesSearch && matchesDecision;
+  });
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -33,12 +49,26 @@ export default function TransactionsPage() {
           <div className="flex items-center gap-4">
             <div className="relative w-full md:w-80">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search Order ID, Payment ID, UTR..." className="pl-9 bg-background" />
+              <Input
+                placeholder="Search Order ID, Payment ID, UTR..."
+                className="pl-9 bg-background"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <button className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors whitespace-nowrap">
-              <Filter className="h-4 w-4" />
-              Filters
-            </button>
+            <div className="flex items-center gap-2">
+              <select
+                className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors appearance-none cursor-pointer"
+                value={decisionFilter}
+                onChange={(e) => setDecisionFilter(e.target.value)}
+              >
+                <option value="ALL">All Decisions</option>
+                <option value="VERIFIED_MATCH">Verified Match</option>
+                <option value="MATCH_WITH_EXPLAINABLE_VARIANCE">Match with Explainable Variance</option>
+                <option value="REVIEW">Review</option>
+                <option value="UNRESOLVED">Unresolved</option>
+              </select>
+            </div>
           </div>
           <div className="text-sm text-muted-foreground flex items-center gap-2">
             <Database className="h-4 w-4" />
@@ -58,7 +88,7 @@ export default function TransactionsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {txs.map((tx) => (
+              {filteredTxs.map((tx) => (
                 <TableRow key={tx.id} className="group cursor-pointer">
                   <TableCell className="font-medium font-mono text-xs">{tx.id}</TableCell>
                   <TableCell className="font-mono text-xs text-muted-foreground">{tx.order}</TableCell>
@@ -95,6 +125,13 @@ export default function TransactionsPage() {
                   </TableCell>
                 </TableRow>
               ))}
+              {filteredTxs.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                    <p>No matching transactions found.</p>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
