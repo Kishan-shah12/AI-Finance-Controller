@@ -161,5 +161,15 @@ export const api = {
       console.error("Failed to query agent:", error);
       throw error;
     }
+  },
+
+  getAuditEvents: async (): Promise<any[]> => {
+    try {
+      const response = await apiClient.get<any[]>("/audit");
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch audit events:", error);
+      return [];
+    }
   }
 };

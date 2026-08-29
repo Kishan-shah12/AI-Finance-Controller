@@ -39,8 +39,11 @@ export default function TransactionsPage() {
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Transaction Explorer</h1>
-          <p className="text-muted-foreground mt-1">Drill into individual financial chains.</p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight">Transaction Explorer</h1>
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">DEMO SAMPLE DATA</Badge>
+          </div>
+          <p className="text-muted-foreground mt-1">Drill into individual canonical financial chains.</p>
         </div>
       </div>
 

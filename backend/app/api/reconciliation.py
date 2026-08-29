@@ -167,8 +167,16 @@ def execute_reconciliation_run(run_id: str, request: RunRequest):
     finally:
         db.close()
 
+_last_run_time = 0
+
 @router.post("/run")
 def start_reconciliation_run(req: RunRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    global _last_run_time
+    now = time.time()
+    if now - _last_run_time < 1.0:
+        raise HTTPException(status_code=429, detail="A reconciliation batch was just triggered. Please wait a moment.")
+    _last_run_time = now
+
     if req.mode == "evaluation":
         raise HTTPException(status_code=403, detail="Evaluation mode cannot be triggered via normal API.")
         
