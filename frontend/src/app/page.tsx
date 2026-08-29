@@ -240,9 +240,8 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-semibold">
-                        {/* We don't have exact amount in this JSON snippet, mocking an amount for the UI requirement or pulling from variance if present */}
-                        {formatINR(ex.variance_details?.amount_difference || 50000)}
+                      <div className="font-semibold text-right tabular-nums text-foreground">
+                        {formatINR(ex.variance_details?.amount_difference ?? ex.variance_details?.difference)}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {formatPercent(ex.confidence)} conf
