@@ -52,22 +52,22 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground mt-1">Configure system parameters and view system status.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
+        <p className="text-muted-foreground mt-1 text-sm sm:text-base">Configure system parameters and view system status.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
         
         <div className="md:col-span-1 space-y-4">
-          <nav className="flex flex-col space-y-1" role="tablist" aria-label="Settings navigation">
+          <nav className="flex flex-row overflow-x-auto pb-2 md:pb-0 md:flex-col gap-1.5 md:gap-0 md:space-y-1 no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0 border-b md:border-b-0 pb-3 md:pb-0" role="tablist" aria-label="Settings navigation">
             <button 
               role="tab"
               aria-selected={activeTab === 'automation'}
               onClick={() => handleTabChange("automation")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'automation' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'automation' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               Automation Policy
             </button>
@@ -75,7 +75,7 @@ export default function SettingsPage() {
               role="tab"
               aria-selected={activeTab === 'providers'}
               onClick={() => handleTabChange("providers")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'providers' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'providers' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               Providers
             </button>
@@ -83,7 +83,7 @@ export default function SettingsPage() {
               role="tab"
               aria-selected={activeTab === 'system'}
               onClick={() => handleTabChange("system")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'system' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'system' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               System Status
             </button>
@@ -91,7 +91,7 @@ export default function SettingsPage() {
               role="tab"
               aria-selected={activeTab === 'demo'}
               onClick={() => handleTabChange("demo")}
-              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'demo' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
+              className={`px-3 py-2 text-sm font-medium text-left rounded-md transition-colors whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-primary ${activeTab === 'demo' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}
             >
               Demo Mode
             </button>

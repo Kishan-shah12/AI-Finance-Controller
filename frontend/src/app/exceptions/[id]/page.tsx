@@ -44,33 +44,33 @@ export default function ExceptionDetail() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-in slide-in-from-bottom-4 duration-500">
       
-      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2 sm:mb-4">
         <Link href="/exceptions" className="hover:text-foreground flex items-center gap-1 transition-colors">
           <ArrowLeft className="h-4 w-4" /> Back to Queue
         </Link>
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight">EXCEPTION {exception.id}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">EXCEPTION {exception.id}</h1>
             <Badge variant="outline" className={cn(
-              "px-3 py-1 text-sm font-semibold",
+              "px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-semibold",
               exception.decision === "REVIEW" ? "text-amber-600 border-amber-200 bg-amber-50" : "text-red-600 border-red-200 bg-red-50"
             )}>
               {exception.decision}
             </Badge>
           </div>
-          <p className="text-muted-foreground text-lg flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+          <p className="text-muted-foreground text-sm sm:text-lg flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 shrink-0" />
             {exception.exception_type.replace(/_/g, ' ')}
           </p>
         </div>
-        <div className="text-right">
-          <div className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-1">Variance</div>
-          <div className="text-3xl font-bold text-destructive tabular-nums">
+        <div className="text-left sm:text-right bg-destructive/5 sm:bg-transparent p-3 sm:p-0 rounded-lg sm:rounded-none border sm:border-0">
+          <div className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-1">Variance</div>
+          <div className="text-2xl sm:text-3xl font-bold text-destructive tabular-nums">
             {formatINR(exception.variance_details?.amount_difference ?? exception.variance_details?.difference)}
           </div>
         </div>
@@ -158,20 +158,20 @@ export default function ExceptionDetail() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-3 pt-6">
-                <Button className="bg-success hover:bg-success/90 text-white font-semibold" onClick={async () => {
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-6">
+                <Button className="bg-success hover:bg-success/90 text-white font-semibold text-xs sm:text-sm" onClick={async () => {
                   await api.performExceptionAction(exception.id!, 'APPROVE_MATCH');
                   router.push('/exceptions');
                 }}>
                   <ShieldCheck className="h-4 w-4 mr-2" /> Approve Match
                 </Button>
-                <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10 font-semibold" onClick={async () => {
+                <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10 font-semibold text-xs sm:text-sm" onClick={async () => {
                   await api.performExceptionAction(exception.id!, 'KEEP_EXCEPTION');
                   router.push('/exceptions');
                 }}>
                   Keep as Exception
                 </Button>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={async () => {
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground text-xs sm:text-sm" onClick={async () => {
                   await api.performExceptionAction(exception.id!, 'ESCALATE');
                   router.push('/exceptions');
                 }}>

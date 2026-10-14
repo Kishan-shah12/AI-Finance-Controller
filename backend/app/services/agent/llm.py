@@ -7,12 +7,15 @@ from sqlalchemy import func
 from app.db.models import ExceptionRecord, ReconciliationRun
 
 try:
+    # pyrefly: ignore [missing-import]
     from google import genai
+    # pyrefly: ignore [missing-import]
     from google.genai import errors
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False
 
+# pyrefly: ignore [missing-import]
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 def is_transient_error(exc: BaseException) -> bool:

@@ -95,27 +95,27 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       
       {/* HERO */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">AI Finance Control Center</h1>
-          <p className="text-muted-foreground mt-2 text-lg max-w-xl">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">AI Finance Control Center</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base md:text-lg max-w-xl">
             Reconcile faster. Explain every variance. Never force a financial match.
           </p>
         </div>
-        <div className="flex items-center gap-4 bg-primary/5 text-primary px-5 py-4 rounded-xl border">
-          <Activity className="h-8 w-8 text-primary opacity-80" />
+        <div className="flex items-center gap-3 sm:gap-4 bg-primary/5 text-primary px-4 sm:px-5 py-3 sm:py-4 rounded-xl border self-start md:self-auto">
+          <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-primary opacity-80 shrink-0" />
           <div>
-            <div className="text-sm font-semibold uppercase tracking-wider opacity-80">Primary KPI</div>
-            <div className="text-2xl font-bold">{metrics.total_scenarios.toLocaleString()} Records Reconciled</div>
+            <div className="text-xs sm:text-sm font-semibold uppercase tracking-wider opacity-80">Primary KPI</div>
+            <div className="text-xl sm:text-2xl font-bold">{metrics.total_scenarios.toLocaleString()} Records Reconciled</div>
           </div>
         </div>
       </div>
 
       {/* METRICS GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         <MetricCard 
           title="Operational Match Rate" 
           value={formatPercent(metrics.operational_match_rate)} 
@@ -310,15 +310,15 @@ export default function Dashboard() {
 function MetricCard({ title, value, highlight, success, warning, danger }: { title: string, value: string, highlight?: boolean, success?: boolean, warning?: boolean, danger?: boolean }) {
   return (
     <div className={cn(
-      "flex flex-col justify-center p-4 rounded-xl border bg-card shadow-sm",
+      "flex flex-col justify-center p-3 sm:p-4 rounded-xl border bg-card shadow-sm",
       highlight && "bg-primary/5 border-primary/20",
       success && "bg-success/5 border-success/20",
       warning && "bg-review/5 border-review/20",
       danger && "bg-exception/5 border-exception/20"
     )}>
-      <div className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">{title}</div>
+      <div className="text-[10px] sm:text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider leading-tight">{title}</div>
       <div className={cn(
-        "text-2xl font-bold tabular-nums",
+        "text-lg sm:text-2xl font-bold tabular-nums",
         highlight && "text-primary",
         success && "text-success",
         warning && "text-amber-600",
@@ -331,10 +331,11 @@ function MetricCard({ title, value, highlight, success, warning, danger }: { tit
 function FunnelStep({ label, value, color }: { label: string, value: number, color: string }) {
   return (
     <div className="flex items-center gap-4">
-      <div className={cn("w-full py-3 px-4 rounded-md border flex items-center justify-between shadow-sm", color)}>
-        <span className="font-medium text-sm">{label}</span>
+      <div className={cn("w-full py-2.5 sm:py-3 px-3 sm:px-4 rounded-md border flex items-center justify-between shadow-sm text-xs sm:text-sm", color)}>
+        <span className="font-medium">{label}</span>
         <span className="font-bold tabular-nums">{value.toLocaleString()}</span>
       </div>
     </div>
   );
 }
+

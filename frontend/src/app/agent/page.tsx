@@ -85,20 +85,20 @@ function AgentChat() {
   return (
     <div className="flex h-full flex-col max-w-5xl mx-auto animate-in fade-in duration-500">
       
-      <div className="p-6 border-b shrink-0 flex items-center justify-between">
+      <div className="p-4 sm:p-6 border-b shrink-0 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <BrainCircuit className="h-6 w-6 text-ai" /> AI Finance Controller
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <BrainCircuit className="h-5 w-5 sm:h-6 sm:w-6 text-ai" /> AI Finance Controller
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">Evidence-backed financial analysis</p>
+          <p className="text-muted-foreground text-xs sm:text-sm mt-0.5 sm:mt-1">Evidence-backed financial analysis</p>
         </div>
-        <Badge variant="outline" className="bg-success/10 text-success border-success/20 flex items-center gap-1.5">
+        <Badge variant="outline" className="bg-success/10 text-success border-success/20 flex items-center gap-1.5 text-xs">
           <span className="h-2 w-2 rounded-full bg-success animate-pulse"></span>
           Online
         </Badge>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-muted/10">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 bg-muted/10">
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex gap-4 max-w-3xl ${msg.role === 'user' ? 'ml-auto' : ''}`}>
             
@@ -203,22 +203,22 @@ function AgentChat() {
         ))}
       </div>
 
-      <div className="p-6 border-t bg-background shrink-0">
+      <div className="p-3 sm:p-6 border-t bg-background shrink-0">
         <div className="relative max-w-3xl mx-auto">
           <Input 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask your Finance Controller..."
-            className="pr-12 h-12 text-base rounded-xl bg-muted/20 border-muted-foreground/20 focus-visible:ring-ai/30 focus-visible:border-ai"
+            className="pr-12 h-11 sm:h-12 text-sm sm:text-base rounded-xl bg-muted/20 border-muted-foreground/20 focus-visible:ring-ai/30 focus-visible:border-ai"
           />
           <Button 
             size="icon" 
             variant="ghost" 
-            className="absolute right-1 top-1 h-10 w-10 text-muted-foreground hover:text-ai hover:bg-ai/10"
+            className="absolute right-1 top-1 h-9 sm:h-10 w-9 sm:w-10 text-muted-foreground hover:text-ai hover:bg-ai/10"
             onClick={handleSend}
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
       </div>

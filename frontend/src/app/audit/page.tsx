@@ -54,29 +54,29 @@ export default function AuditTrailPage() {
   const uniqueActions = Array.from(new Set(audits.map(a => a.action)));
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Audit Trail</h1>
-          <p className="text-muted-foreground mt-1">Immutable timeline of system and user events.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Audit Trail</h1>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">Immutable timeline of system and user events.</p>
         </div>
       </div>
 
       <Card>
         <CardHeader className="border-b pb-4 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="relative w-full md:w-80">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full sm:w-80">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search event, actor, or entity..." 
-                className="pl-9 bg-background"
+                className="pl-9 bg-background" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <select
-              className="text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors cursor-pointer"
+              className="text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors cursor-pointer w-full sm:w-auto"
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
               aria-label="Filter audit action"
@@ -87,11 +87,11 @@ export default function AuditTrailPage() {
               ))}
             </select>
           </div>
-          <div className="text-sm font-medium px-3 py-1 bg-amber-500/10 text-amber-600 rounded-md border border-amber-200">
+          <div className="text-xs sm:text-sm font-medium px-3 py-1 bg-amber-500/10 text-amber-600 rounded-md border border-amber-200 self-start md:self-auto">
             Immutable Audit Trail
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           {loading ? (
             <div className="py-12 text-center text-muted-foreground flex items-center justify-center gap-2">
               <Clock className="h-5 w-5 animate-spin" /> Loading audit events...

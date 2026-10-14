@@ -79,24 +79,24 @@ export default function ReconciliationCommandCenter() {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       <div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight">Reconciliation</h1>
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">COMMAND CENTER</Badge>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Reconciliation</h1>
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">COMMAND CENTER</Badge>
         </div>
-        <p className="text-muted-foreground mt-2 text-lg max-w-2xl">
+        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-lg max-w-2xl">
           Verify every financial movement across payment, settlement and bank systems.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <Card className="border-border/60 shadow-sm md:col-span-2">
-          <CardHeader className="bg-muted/10 border-b">
-            <CardTitle>Provider Selection</CardTitle>
-            <CardDescription>Select the data source for the reconciliation run.</CardDescription>
+          <CardHeader className="bg-muted/10 border-b p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Provider Selection</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Select the data source for the reconciliation run.</CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div 
                 className={cn("flex-1 border rounded-md p-4 cursor-pointer transition-all", provider === 'SYNTHETIC' ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50")}

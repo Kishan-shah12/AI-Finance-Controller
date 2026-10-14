@@ -122,3 +122,16 @@
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .safe-bottom {
+    padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+  }
+}

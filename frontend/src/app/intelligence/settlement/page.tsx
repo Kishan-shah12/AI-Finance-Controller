@@ -66,17 +66,17 @@ export default function SettlementIntelligence() {
   const totalScenarios = demoRun?.scenario_count ?? (verifiedMatches + explainableVar + manualReview + unresolved);
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">Settlement Intelligence</h1>
-            <Badge variant="outline" className="bg-ai/10 text-ai border-ai/20">AI ANALYSIS</Badge>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settlement Intelligence</h1>
+            <Badge variant="outline" className="bg-ai/10 text-ai border-ai/20 text-xs">AI ANALYSIS</Badge>
           </div>
-          <p className="text-muted-foreground mt-1">Variance decomposition and evidence-backed explanations.</p>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">Variance decomposition and evidence-backed explanations.</p>
         </div>
-        <div className="text-sm font-medium text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-md border">
+        <div className="text-xs sm:text-sm font-medium text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-md border self-start md:self-auto">
           {demoRun ? `Run ID: ${demoRun.run_id?.slice(0, 8)}` : "Frozen Demo Distribution"}
         </div>
       </div>
@@ -87,29 +87,29 @@ export default function SettlementIntelligence() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="p-6">
-                <div className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-2">Evaluated Scenarios</div>
-                <div className="text-3xl font-bold tabular-nums">
+              <CardContent className="p-4 sm:p-6">
+                <div className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-1 sm:mb-2">Evaluated Scenarios</div>
+                <div className="text-2xl sm:text-3xl font-bold tabular-nums">
                   {totalScenarios > 0 ? totalScenarios.toLocaleString() : "—"}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">Total ingested financial chains</div>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="p-6">
-                <div className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-2">Auto-Resolved Rate</div>
-                <div className="text-3xl font-bold tabular-nums text-foreground">
+              <CardContent className="p-4 sm:p-6">
+                <div className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-1 sm:mb-2">Auto-Resolved Rate</div>
+                <div className="text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
                   {totalScenarios > 0 ? formatPercent((verifiedMatches + explainableVar) / totalScenarios) : "—"}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">{verifiedMatches} exact + {explainableVar} explainable</div>
               </CardContent>
             </Card>
             <Card className="bg-destructive/5 border-destructive/20">
-              <CardContent className="p-6">
-                <div className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-2">Unexplained Variance</div>
-                <div className="text-3xl font-bold tabular-nums text-destructive">
+              <CardContent className="p-4 sm:p-6">
+                <div className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-1 sm:mb-2">Unexplained Variance</div>
+                <div className="text-2xl sm:text-3xl font-bold tabular-nums text-destructive">
                   {totalVariance > 0 ? formatINR(totalVariance) : (unresolved > 0 ? `${unresolved} Cases` : "₹0")}
                 </div>
                 <div className="text-xs text-destructive/80 mt-1 font-medium">
@@ -119,7 +119,7 @@ export default function SettlementIntelligence() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
             
             {/* WATERFALL DECOMPOSITION */}
             <Card className="border-border/60">

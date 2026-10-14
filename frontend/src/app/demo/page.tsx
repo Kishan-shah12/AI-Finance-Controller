@@ -162,22 +162,22 @@ export default function DemoPage() {
   }, [presentationMode]);
 
   return (
-    <div className={`space-y-6 ${presentationMode ? "p-8 max-w-[1400px] mx-auto" : ""}`}>
+    <div className={`space-y-6 ${presentationMode ? "p-4 sm:p-6 md:p-8 max-w-[1400px] mx-auto" : "p-4 sm:p-6 md:p-8 max-w-7xl mx-auto"}`}>
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className={`font-bold tracking-tight ${presentationMode ? "text-5xl" : "text-3xl"}`}>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className={`font-bold tracking-tight ${presentationMode ? "text-3xl sm:text-5xl" : "text-2xl sm:text-3xl"}`}>
               RECONAI
             </h1>
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">
               ● DEMO DATA
             </Badge>
           </div>
-          <p className="text-muted-foreground mt-1 text-lg">AI FINANCE CONTROLLER</p>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base md:text-lg">AI FINANCE CONTROLLER</p>
         </div>
         
-        <Button variant="outline" size="sm" onClick={() => setPresentationMode(!presentationMode)}>
+        <Button variant="outline" size="sm" onClick={() => setPresentationMode(!presentationMode)} className="text-xs sm:text-sm">
           <Maximize2 className="h-4 w-4 mr-2" />
           {presentationMode ? "Exit Presentation" : "Presentation Mode"}
         </Button>
@@ -185,25 +185,25 @@ export default function DemoPage() {
 
       {demoState === "IDLE" && (
         <Card className="border-border shadow-md bg-card/50">
-          <CardContent className="pt-10 pb-10 flex flex-col items-center text-center space-y-6">
+          <CardContent className="pt-8 sm:pt-10 pb-8 sm:pb-10 flex flex-col items-center text-center space-y-6 px-4 sm:px-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">1,000 financial records.</h2>
-              <h2 className="text-2xl font-semibold">Multiple sources.</h2>
-              <h2 className="text-2xl font-semibold">One reconciliation run.</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold">1,000 financial records.</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold">Multiple sources.</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold">One reconciliation run.</h2>
             </div>
             
-            <div className="space-y-1 text-muted-foreground">
+            <div className="space-y-1 text-muted-foreground text-sm sm:text-base">
               <p>Verify what matches.</p>
               <p>Explain what doesn't.</p>
               <p className="font-medium text-foreground">Never force a financial match.</p>
             </div>
             
-            <div className="flex gap-4 pt-4">
-              <Button size="lg" onClick={handleRunDemo} className="font-semibold px-8 h-12 text-lg">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 w-full sm:w-auto">
+              <Button size="lg" onClick={handleRunDemo} className="font-semibold px-6 sm:px-8 h-11 sm:h-12 text-base sm:text-lg w-full sm:w-auto">
                 <PlayCircle className="mr-2 h-5 w-5" /> RUN JUDGE DEMO
               </Button>
               {lastRun && (
-                <Button size="lg" variant="outline" onClick={viewLastRun} className="h-12">
+                <Button size="lg" variant="outline" onClick={viewLastRun} className="h-11 sm:h-12 text-sm sm:text-base w-full sm:w-auto">
                   <History className="mr-2 h-5 w-5" /> VIEW LAST RUN
                 </Button>
               )}

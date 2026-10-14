@@ -35,22 +35,22 @@ export default function TransactionsPage() {
   });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">Transaction Explorer</h1>
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">DEMO SAMPLE DATA</Badge>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Transaction Explorer</h1>
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">DEMO SAMPLE DATA</Badge>
           </div>
-          <p className="text-muted-foreground mt-1">Drill into individual canonical financial chains.</p>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">Drill into individual canonical financial chains.</p>
         </div>
       </div>
 
       <Card>
         <CardHeader className="border-b pb-4 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="relative w-full md:w-80">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full sm:w-80">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search Order ID, Payment ID, UTR..."
@@ -59,11 +59,12 @@ export default function TransactionsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <select
-                className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors appearance-none cursor-pointer"
+                className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors appearance-none cursor-pointer w-full sm:w-auto"
                 value={decisionFilter}
                 onChange={(e) => setDecisionFilter(e.target.value)}
+                aria-label="Filter transaction decision"
               >
                 <option value="ALL">All Decisions</option>
                 <option value="VERIFIED_MATCH">Verified Match</option>
@@ -73,13 +74,13 @@ export default function TransactionsPage() {
               </select>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground flex items-center gap-2">
+          <div className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2 shrink-0">
             <Database className="h-4 w-4" />
             Showing latest 500 records
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
+          <Table className="min-w-[700px]">
             <TableHeader className="bg-muted/30">
               <TableRow>
                 <TableHead>Transaction ID</TableHead>

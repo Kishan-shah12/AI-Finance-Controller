@@ -35,26 +35,26 @@ export default function MetricsPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b pb-6">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 border-b pb-4 sm:pb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex flex-wrap items-center gap-2 sm:gap-3">
             Model & System Performance
-            <Badge variant="outline" className="text-ai border-ai/30 bg-ai/10 uppercase tracking-widest text-xs px-3 py-1">
+            <Badge variant="outline" className="text-ai border-ai/30 bg-ai/10 uppercase tracking-widest text-[10px] sm:text-xs px-2.5 sm:px-3 py-0.5 sm:py-1">
               <Lock className="h-3 w-3 mr-1.5 inline-block" /> Locked Test Set
             </Badge>
           </h1>
-          <p className="text-muted-foreground mt-2 text-lg">
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base md:text-lg">
             Scientific performance metrics measured on the frozen test distribution.
           </p>
         </div>
-        <div className="text-right text-sm text-muted-foreground bg-muted/30 px-4 py-2 rounded-lg border">
-          <div className="uppercase tracking-wider text-[10px] font-bold mb-1">Model Version</div>
+        <div className="text-left md:text-right text-xs sm:text-sm text-muted-foreground bg-muted/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border self-start md:self-auto">
+          <div className="uppercase tracking-wider text-[9px] sm:text-[10px] font-bold mb-0.5 sm:mb-1">Model Version</div>
           <div className="font-mono text-foreground font-medium">{metrics.model_version}</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         
         {/* STANDARD ML METRICS */}
         <Card className="border-border/50 shadow-sm">

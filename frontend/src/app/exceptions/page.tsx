@@ -47,13 +47,13 @@ export default function ExceptionsPage() {
   });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Exception Queue</h1>
-          <p className="text-muted-foreground mt-1">Review and resolve ambiguous or conflicting financial records.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Exception Queue</h1>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">Review and resolve ambiguous or conflicting financial records.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200 px-3 py-1 text-xs">
             {exceptions.filter(e => e.decision === "REVIEW").length} Pending Review
           </Badge>
@@ -65,8 +65,8 @@ export default function ExceptionsPage() {
 
       <Card>
         <CardHeader className="border-b pb-4 bg-muted/20">
-          <div className="flex items-center justify-between">
-            <div className="relative w-72">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="relative w-full sm:w-72">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search ID or reason..." 
@@ -76,9 +76,10 @@ export default function ExceptionsPage() {
               />
             </div>
             <select 
-              className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors appearance-none"
+              className="flex items-center gap-2 text-sm text-muted-foreground border bg-background px-3 py-2 rounded-md hover:bg-muted transition-colors appearance-none cursor-pointer w-full sm:w-auto"
               value={filterDecision}
               onChange={(e) => setFilterDecision(e.target.value)}
+              aria-label="Filter decision"
             >
               <option value="ALL">All Decisions</option>
               <option value="REVIEW">Review</option>
@@ -88,7 +89,7 @@ export default function ExceptionsPage() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
+          <Table className="min-w-[650px]">
             <TableHeader>
               <TableRow className="bg-muted/30 hover:bg-muted/30">
                 <TableHead className="w-[120px]">Exception ID</TableHead>
