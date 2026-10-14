@@ -19,9 +19,10 @@ except ImportError:
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 def is_transient_error(exc: BaseException) -> bool:
-    if isinstance(exc, errors.APIError):
-        return exc.code in (429, 503, 500, 502, 504)
+    if GEMINI_AVAILABLE and 'errors' in globals() and hasattr(errors, 'APIError') and isinstance(exc, errors.APIError):
+        return getattr(exc, 'code', 0) in (429, 503, 500, 502, 504)
     return False
+
 
 class LLMProvider(ABC):
     @abstractmethod

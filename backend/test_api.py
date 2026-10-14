@@ -30,4 +30,6 @@ def run():
         items = res.json()
         print("Exceptions count:", len(items) if isinstance(items, list) else items)
 
-run()
+if __name__ == "__main__":
+    run()
+
